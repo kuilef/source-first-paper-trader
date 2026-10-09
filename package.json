@@ -7,7 +7,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build && node scripts/build-worker.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -18,7 +18,9 @@
     "live-smoke": "node --import tsx scripts/live-smoke.ts",
     "lint": "eslint .",
     "check": "npm run typecheck && npm run lint && npm test && npm run build && npm run test:e2e",
-    "package": "node scripts/package.mjs"
+    "package": "npm run build && node scripts/build-worker.mjs --package",
+    "preview": "node scripts/preview.mjs",
+    "format": "prettier --write src worker tests scripts *.ts *.js *.json index.html docs/*.md README.md THIRD_PARTY.md"
   },
   "dependencies": {
     "@noble/hashes": "2.4.0",
@@ -35,10 +37,17 @@
     "eslint": "10.12.0",
     "jsdom": "30.1.2",
     "miniflare": "4.20260730.0",
+    "prettier": "3.9.9",
     "tsx": "4.23.15",
     "typescript": "6.0.3",
     "typescript-eslint": "8.71.1",
     "vite": "8.3.4",
     "vitest": "5.0.3"
+  },
+  "overrides": {
+    "miniflare": {
+      "undici": "7.29.1",
+      "sharp": "0.35.5"
+    }
   }
 }
