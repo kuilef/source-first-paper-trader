@@ -4,6 +4,8 @@ A rule-based research agent that checks original Kraken listing evidence, then a
 
 **Paper-only. No funds, wallet, exchange login, API keys or language model.** A positive illustrative outcome is not evidence of investment returns.
 
+[Live demo](https://source-first-paper-trader.kuilef42.workers.dev/) · [Grant application guide](GRANT_APPLICATION.md)
+
 ## Try it locally
 
 Requirements: Node.js 24 LTS, npm, and `zip` for the optional upload bundle.
@@ -116,7 +118,9 @@ PRODUCTION_PREVIEW=1 STANDALONE_PREVIEW=1 npm run test:e2e
 
 In the normal Cloudflare Worker dashboard, open the project's code editor, replace the default `worker.js` content with the complete generated module, and deploy it as an ES-module Worker. Use compatibility date `2026-07-01` or later. No Node compatibility flag or asset binding is needed. Keep the `export` at the end of the file. Do not paste TypeScript source or a ZIP into the editor.
 
-Deployment target: [source-first-paper-trader.kuilef42.workers.dev](https://source-first-paper-trader.kuilef42.workers.dev). This address is a configured target, not a claim that the current app is deployed there. After publication, compare `/release.json` with the actual source commit and verify the logo, replay and live-source routes. To stamp a verified revision when building an exported source archive, set `BUILD_REVISION=<verified-commit>` before `npm run package:worker`. All requests, including embedded static assets, consume Worker invocations; account quotas still apply.
+Live demo: [source-first-paper-trader.kuilef42.workers.dev](https://source-first-paper-trader.kuilef42.workers.dev/). The deployed artifact was built from [f143cafd](https://github.com/kuilef/source-first-paper-trader/commit/f143cafdde1e68e7d0d6dec81589aae05013ae2b). Browser checks on 9 October 2026 verified the illustrative entry/exit, old-event abstention, and a real Kraken-source scan; the live agent was then stopped. This documentation-only update does not change that running app revision.
+
+For future deployments, inspect `/release.json` and verify the logo, replay and live-source routes. To stamp a verified revision when building an exported source archive, set `BUILD_REVISION=<verified-commit>` before `npm run package:worker`. All requests, including embedded static assets, consume Worker invocations; account quotas still apply.
 
 ## Privacy, storage and licence
 
