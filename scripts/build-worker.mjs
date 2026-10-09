@@ -32,11 +32,22 @@ await writeFile(
   JSON.stringify({ version: "1.0.0", sourceCommit }, null, 2) + "\n",
 );
 // Preserve runtime dependency licence notices with the deployed client bundle.
-const { readFile } = await import("node:fs/promises");
+const { readFile, readdir, appendFile } = await import("node:fs/promises");
 await writeFile(
   "dist/third-party-licenses.txt",
   await readFile("THIRD_PARTY.md"),
 );
+
+// Text-based folder transfer preserves a terminal LF. Normalize it here so
+// local builds and CI artifacts are byte-identical; never add a second LF.
+for (const entry of await readdir("dist", {
+  recursive: true,
+  withFileTypes: true,
+})) {
+  if (!entry.isFile()) continue;
+  const path = `${entry.parentPath}/${entry.name}`;
+  if ((await readFile(path)).at(-1) !== 10) await appendFile(path, "\n");
+}
 
 if (process.argv.includes("--package")) {
   const { mkdir } = await import("node:fs/promises");
