@@ -1,3 +1,5 @@
+import { projectLogoResponse } from "./logo.ts";
+
 /** A raw, bounded public-source proxy. Parsing and trading policy stay in the browser. */
 export interface CacheLike {
   match(request: Request): Promise<Response | undefined>;
@@ -286,6 +288,8 @@ export function createProxyHandler(options: ProxyOptions = {}) {
           "Static assets support only GET and HEAD.",
           { allow: "GET, HEAD" },
         );
+      if (url.pathname === "/logo.png")
+        return secure(projectLogoResponse(request.method));
       if (!env.ASSETS)
         return errorResponse(
           404,
