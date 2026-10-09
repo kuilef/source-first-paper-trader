@@ -1,0 +1,578 @@
+{
+  "stale-quote": {
+    "schemaVersion": 1,
+    "mode": "illustrative-replay",
+    "evaluatedAt": "2026-10-09T12:00:00.000Z",
+    "parserVersion": "kraken-rss-v1",
+    "policyVersion": "policy-v1",
+    "intent": "scan",
+    "claim": {
+      "text": "ZCHF listing on Kraken",
+      "assetName": null,
+      "symbol": "ZCHF",
+      "venue": "kraken",
+      "eventType": "spot-listing",
+      "source": "official-feed"
+    },
+    "announcement": {
+      "url": "https://blog.kraken.com/product/asset-listings/zchf-is-available-for-trading",
+      "title": "ZCHF is available for trading!",
+      "excerpt": "ZCHF trading is live as of October 8, 2026.",
+      "publishedAt": "2026-10-08T15:53:48.000Z",
+      "firstSeenAt": "2026-10-09T12:00:00.000Z",
+      "retrievedAt": "2026-10-09T12:00:00.000Z",
+      "explicitTradingDate": "2026-10-08",
+      "datePrecision": "day",
+      "tradingDatePhrase": "October 8, 2026",
+      "sourceTimezone": "unknown",
+      "assetName": "Frankencoin",
+      "symbol": "ZCHF",
+      "supported": true,
+      "receipt": {
+        "url": "https://blog.kraken.com/category/product/asset-listings/feed",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "pair": {
+      "key": "ZCHF/USD",
+      "altname": "ZCHFUSD",
+      "wsname": "ZCHF/USD",
+      "base": "ZCHF",
+      "quote": "USD",
+      "status": "online",
+      "lotDecimals": 6,
+      "orderMin": "0.01",
+      "costMin": "0.5",
+      "observedAt": "2026-10-09T12:00:00.000Z",
+      "receipt": {
+        "url": "https://api.kraken.com/0/public/AssetPairs?assetVersion=1&pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "quote": {
+      "pairKey": "ZCHF/USD",
+      "bid": "9.99",
+      "ask": "10",
+      "requestedAt": "2026-10-09T12:00:00.000Z",
+      "observedAt": "2026-10-09T11:00:00.000Z",
+      "exchangeTimestamp": null,
+      "upstreamAgeSeconds": 0,
+      "receipt": {
+        "url": "https://api.kraken.com/0/public/Ticker?pair=ZCHFUSD",
+        "observedAt": "2026-10-09T11:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "sourceReceipts": [
+      {
+        "url": "https://blog.kraken.com/category/product/asset-listings/feed",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      },
+      {
+        "url": "https://api.kraken.com/0/public/AssetPairs?assetVersion=1&pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      },
+      {
+        "url": "https://api.kraken.com/0/public/Ticker?pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    ],
+    "portfolioBefore": {
+      "cash": "1000",
+      "realizedPnl": "0",
+      "position": null,
+      "seenEvents": []
+    }
+  },
+  "identity-conflict": {
+    "schemaVersion": 1,
+    "mode": "illustrative-replay",
+    "evaluatedAt": "2026-10-09T12:00:00.000Z",
+    "parserVersion": "kraken-rss-v1",
+    "policyVersion": "policy-v1",
+    "intent": "scan",
+    "claim": {
+      "text": "ZCHF listing on Kraken",
+      "assetName": "Another asset with the same symbol",
+      "symbol": "ZCHF",
+      "venue": "kraken",
+      "eventType": "spot-listing",
+      "source": "official-feed"
+    },
+    "announcement": {
+      "url": "https://blog.kraken.com/product/asset-listings/zchf-is-available-for-trading",
+      "title": "ZCHF is available for trading!",
+      "excerpt": "ZCHF trading is live as of October 8, 2026.",
+      "publishedAt": "2026-10-08T15:53:48.000Z",
+      "firstSeenAt": "2026-10-09T12:00:00.000Z",
+      "retrievedAt": "2026-10-09T12:00:00.000Z",
+      "explicitTradingDate": "2026-10-08",
+      "datePrecision": "day",
+      "tradingDatePhrase": "October 8, 2026",
+      "sourceTimezone": "unknown",
+      "assetName": "Frankencoin",
+      "symbol": "ZCHF",
+      "supported": true,
+      "receipt": {
+        "url": "https://blog.kraken.com/category/product/asset-listings/feed",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "pair": {
+      "key": "ZCHF/USD",
+      "altname": "ZCHFUSD",
+      "wsname": "ZCHF/USD",
+      "base": "ZCHF",
+      "quote": "USD",
+      "status": "online",
+      "lotDecimals": 6,
+      "orderMin": "0.01",
+      "costMin": "0.5",
+      "observedAt": "2026-10-09T12:00:00.000Z",
+      "receipt": {
+        "url": "https://api.kraken.com/0/public/AssetPairs?assetVersion=1&pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "quote": {
+      "pairKey": "ZCHF/USD",
+      "bid": "9.99",
+      "ask": "10",
+      "requestedAt": "2026-10-09T12:00:00.000Z",
+      "observedAt": "2026-10-09T12:00:00.000Z",
+      "exchangeTimestamp": null,
+      "upstreamAgeSeconds": 0,
+      "receipt": {
+        "url": "https://api.kraken.com/0/public/Ticker?pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "sourceReceipts": [
+      {
+        "url": "https://blog.kraken.com/category/product/asset-listings/feed",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      },
+      {
+        "url": "https://api.kraken.com/0/public/AssetPairs?assetVersion=1&pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      },
+      {
+        "url": "https://api.kraken.com/0/public/Ticker?pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    ],
+    "portfolioBefore": {
+      "cash": "1000",
+      "realizedPnl": "0",
+      "position": null,
+      "seenEvents": []
+    }
+  },
+  "confirmed": {
+    "schemaVersion": 1,
+    "mode": "illustrative-replay",
+    "evaluatedAt": "2026-10-09T12:00:00.000Z",
+    "parserVersion": "kraken-rss-v1",
+    "policyVersion": "policy-v1",
+    "intent": "scan",
+    "claim": {
+      "text": "ZCHF listing on Kraken",
+      "assetName": null,
+      "symbol": "ZCHF",
+      "venue": "kraken",
+      "eventType": "spot-listing",
+      "source": "official-feed"
+    },
+    "announcement": {
+      "url": "https://blog.kraken.com/product/asset-listings/zchf-is-available-for-trading",
+      "title": "ZCHF is available for trading!",
+      "excerpt": "ZCHF trading is live as of October 8, 2026.",
+      "publishedAt": "2026-10-08T15:53:48.000Z",
+      "firstSeenAt": "2026-10-09T12:00:00.000Z",
+      "retrievedAt": "2026-10-09T12:00:00.000Z",
+      "explicitTradingDate": "2026-10-08",
+      "datePrecision": "day",
+      "tradingDatePhrase": "October 8, 2026",
+      "sourceTimezone": "unknown",
+      "assetName": "Frankencoin",
+      "symbol": "ZCHF",
+      "supported": true,
+      "receipt": {
+        "url": "https://blog.kraken.com/category/product/asset-listings/feed",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "pair": {
+      "key": "ZCHF/USD",
+      "altname": "ZCHFUSD",
+      "wsname": "ZCHF/USD",
+      "base": "ZCHF",
+      "quote": "USD",
+      "status": "online",
+      "lotDecimals": 6,
+      "orderMin": "0.01",
+      "costMin": "0.5",
+      "observedAt": "2026-10-09T12:00:00.000Z",
+      "receipt": {
+        "url": "https://api.kraken.com/0/public/AssetPairs?assetVersion=1&pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "quote": {
+      "pairKey": "ZCHF/USD",
+      "bid": "9.99",
+      "ask": "10",
+      "requestedAt": "2026-10-09T12:00:00.000Z",
+      "observedAt": "2026-10-09T12:00:00.000Z",
+      "exchangeTimestamp": null,
+      "upstreamAgeSeconds": 0,
+      "receipt": {
+        "url": "https://api.kraken.com/0/public/Ticker?pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "sourceReceipts": [
+      {
+        "url": "https://blog.kraken.com/category/product/asset-listings/feed",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      },
+      {
+        "url": "https://api.kraken.com/0/public/AssetPairs?assetVersion=1&pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      },
+      {
+        "url": "https://api.kraken.com/0/public/Ticker?pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    ],
+    "portfolioBefore": {
+      "cash": "1000",
+      "realizedPnl": "0",
+      "position": null,
+      "seenEvents": []
+    }
+  },
+  "wide-spread": {
+    "schemaVersion": 1,
+    "mode": "illustrative-replay",
+    "evaluatedAt": "2026-10-09T12:00:00.000Z",
+    "parserVersion": "kraken-rss-v1",
+    "policyVersion": "policy-v1",
+    "intent": "scan",
+    "claim": {
+      "text": "ZCHF listing on Kraken",
+      "assetName": null,
+      "symbol": "ZCHF",
+      "venue": "kraken",
+      "eventType": "spot-listing",
+      "source": "official-feed"
+    },
+    "announcement": {
+      "url": "https://blog.kraken.com/product/asset-listings/zchf-is-available-for-trading",
+      "title": "ZCHF is available for trading!",
+      "excerpt": "ZCHF trading is live as of October 8, 2026.",
+      "publishedAt": "2026-10-08T15:53:48.000Z",
+      "firstSeenAt": "2026-10-09T12:00:00.000Z",
+      "retrievedAt": "2026-10-09T12:00:00.000Z",
+      "explicitTradingDate": "2026-10-08",
+      "datePrecision": "day",
+      "tradingDatePhrase": "October 8, 2026",
+      "sourceTimezone": "unknown",
+      "assetName": "Frankencoin",
+      "symbol": "ZCHF",
+      "supported": true,
+      "receipt": {
+        "url": "https://blog.kraken.com/category/product/asset-listings/feed",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "pair": {
+      "key": "ZCHF/USD",
+      "altname": "ZCHFUSD",
+      "wsname": "ZCHF/USD",
+      "base": "ZCHF",
+      "quote": "USD",
+      "status": "online",
+      "lotDecimals": 6,
+      "orderMin": "0.01",
+      "costMin": "0.5",
+      "observedAt": "2026-10-09T12:00:00.000Z",
+      "receipt": {
+        "url": "https://api.kraken.com/0/public/AssetPairs?assetVersion=1&pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "quote": {
+      "pairKey": "ZCHF/USD",
+      "bid": "8",
+      "ask": "10",
+      "requestedAt": "2026-10-09T12:00:00.000Z",
+      "observedAt": "2026-10-09T12:00:00.000Z",
+      "exchangeTimestamp": null,
+      "upstreamAgeSeconds": 0,
+      "receipt": {
+        "url": "https://api.kraken.com/0/public/Ticker?pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "sourceReceipts": [
+      {
+        "url": "https://blog.kraken.com/category/product/asset-listings/feed",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      },
+      {
+        "url": "https://api.kraken.com/0/public/AssetPairs?assetVersion=1&pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      },
+      {
+        "url": "https://api.kraken.com/0/public/Ticker?pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    ],
+    "portfolioBefore": {
+      "cash": "1000",
+      "realizedPnl": "0",
+      "position": null,
+      "seenEvents": []
+    }
+  },
+  "recycled": {
+    "schemaVersion": 1,
+    "mode": "illustrative-replay",
+    "evaluatedAt": "2026-10-09T12:00:00.000Z",
+    "parserVersion": "kraken-rss-v1",
+    "policyVersion": "policy-v1",
+    "intent": "scan",
+    "claim": {
+      "text": "ZCHF listing on Kraken",
+      "assetName": null,
+      "symbol": "ZCHF",
+      "venue": "kraken",
+      "eventType": "spot-listing",
+      "source": "official-feed"
+    },
+    "announcement": {
+      "url": "https://blog.kraken.com/product/asset-listings/zchf-is-available-for-trading",
+      "title": "ZCHF is available for trading!",
+      "excerpt": "Illustrative old trading date paired with a newer publication.",
+      "publishedAt": "2026-10-08T15:53:48.000Z",
+      "firstSeenAt": "2026-10-09T12:00:00.000Z",
+      "retrievedAt": "2026-10-09T12:00:00.000Z",
+      "explicitTradingDate": "2026-10-05",
+      "datePrecision": "day",
+      "tradingDatePhrase": "October 5, 2026",
+      "sourceTimezone": "unknown",
+      "assetName": "Frankencoin",
+      "symbol": "ZCHF",
+      "supported": true,
+      "receipt": {
+        "url": "https://blog.kraken.com/category/product/asset-listings/feed",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "pair": {
+      "key": "ZCHF/USD",
+      "altname": "ZCHFUSD",
+      "wsname": "ZCHF/USD",
+      "base": "ZCHF",
+      "quote": "USD",
+      "status": "online",
+      "lotDecimals": 6,
+      "orderMin": "0.01",
+      "costMin": "0.5",
+      "observedAt": "2026-10-09T12:00:00.000Z",
+      "receipt": {
+        "url": "https://api.kraken.com/0/public/AssetPairs?assetVersion=1&pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "quote": {
+      "pairKey": "ZCHF/USD",
+      "bid": "9.99",
+      "ask": "10",
+      "requestedAt": "2026-10-09T12:00:00.000Z",
+      "observedAt": "2026-10-09T12:00:00.000Z",
+      "exchangeTimestamp": null,
+      "upstreamAgeSeconds": 0,
+      "receipt": {
+        "url": "https://api.kraken.com/0/public/Ticker?pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "sourceReceipts": [
+      {
+        "url": "https://blog.kraken.com/category/product/asset-listings/feed",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      },
+      {
+        "url": "https://api.kraken.com/0/public/AssetPairs?assetVersion=1&pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      },
+      {
+        "url": "https://api.kraken.com/0/public/Ticker?pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    ],
+    "portfolioBefore": {
+      "cash": "1000",
+      "realizedPnl": "0",
+      "position": null,
+      "seenEvents": []
+    }
+  },
+  "future": {
+    "schemaVersion": 1,
+    "mode": "illustrative-replay",
+    "evaluatedAt": "2026-10-09T12:00:00.000Z",
+    "parserVersion": "kraken-rss-v1",
+    "policyVersion": "policy-v1",
+    "intent": "scan",
+    "claim": {
+      "text": "ZCHF listing on Kraken",
+      "assetName": null,
+      "symbol": "ZCHF",
+      "venue": "kraken",
+      "eventType": "spot-listing",
+      "source": "official-feed"
+    },
+    "announcement": {
+      "url": "https://blog.kraken.com/product/asset-listings/zchf-is-available-for-trading",
+      "title": "ZCHF is available for trading!",
+      "excerpt": "Illustrative future trading date.",
+      "publishedAt": "2026-10-08T15:53:48.000Z",
+      "firstSeenAt": "2026-10-09T12:00:00.000Z",
+      "retrievedAt": "2026-10-09T12:00:00.000Z",
+      "explicitTradingDate": "2026-10-10",
+      "datePrecision": "day",
+      "tradingDatePhrase": "October 10, 2026",
+      "sourceTimezone": "unknown",
+      "assetName": "Frankencoin",
+      "symbol": "ZCHF",
+      "supported": true,
+      "receipt": {
+        "url": "https://blog.kraken.com/category/product/asset-listings/feed",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "pair": {
+      "key": "ZCHF/USD",
+      "altname": "ZCHFUSD",
+      "wsname": "ZCHF/USD",
+      "base": "ZCHF",
+      "quote": "USD",
+      "status": "online",
+      "lotDecimals": 6,
+      "orderMin": "0.01",
+      "costMin": "0.5",
+      "observedAt": "2026-10-09T12:00:00.000Z",
+      "receipt": {
+        "url": "https://api.kraken.com/0/public/AssetPairs?assetVersion=1&pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "quote": {
+      "pairKey": "ZCHF/USD",
+      "bid": "9.99",
+      "ask": "10",
+      "requestedAt": "2026-10-09T12:00:00.000Z",
+      "observedAt": "2026-10-09T12:00:00.000Z",
+      "exchangeTimestamp": null,
+      "upstreamAgeSeconds": 0,
+      "receipt": {
+        "url": "https://api.kraken.com/0/public/Ticker?pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    },
+    "sourceReceipts": [
+      {
+        "url": "https://blog.kraken.com/category/product/asset-listings/feed",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      },
+      {
+        "url": "https://api.kraken.com/0/public/AssetPairs?assetVersion=1&pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      },
+      {
+        "url": "https://api.kraken.com/0/public/Ticker?pair=ZCHFUSD",
+        "observedAt": "2026-10-09T12:00:00.000Z",
+        "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
+        "upstreamAgeSeconds": 0
+      }
+    ],
+    "portfolioBefore": {
+      "cash": "1000",
+      "realizedPnl": "0",
+      "position": null,
+      "seenEvents": []
+    }
+  }
+}
