@@ -1,0 +1,48 @@
+name: Verify and package
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BUILD_REVISION: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm audit --audit-level=high
+      - run: npm run package
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          PRODUCTION_PREVIEW: "1"
+      - name: Upload flat Cloudflare deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-pages-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-evidence-${{ github.sha }}
+          path: |
+            artifacts/screenshots/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 14
