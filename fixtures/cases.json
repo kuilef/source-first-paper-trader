@@ -83,7 +83,7 @@
       },
       {
         "url": "https://api.kraken.com/0/public/Ticker?pair=ZCHFUSD",
-        "observedAt": "2026-10-09T12:00:00.000Z",
+        "observedAt": "2026-10-09T11:00:00.000Z",
         "bodyHash": "d6b2adc4d07d1492b434d6531e06fb862a55b78e67a914e46cf50a213d869880",
         "upstreamAgeSeconds": 0
       }
