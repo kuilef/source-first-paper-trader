@@ -14,7 +14,7 @@ npm run build
 npm run preview
 ```
 
-Open http://127.0.0.1:4173. This preview runs the actual Cloudflare Worker through Miniflare, including its same-origin public-source routes and security headers. `npm run dev` is a faster UI-only Vite server; its live-source routes are intentionally unavailable.
+Open http://127.0.0.1:4173. This preview runs the actual Cloudflare Worker through Miniflare, including its same-origin public-source routes and security headers. `npm run dev` is a faster UI-only Vite server; its live-source routes are intentionally unavailable. Both servers serve the same `/logo.png` download from the embedded project artwork.
 
 1. In **Replay lab**, run the fresh-listing case. Inspect the automatic entry and later exit, source identity, event date, policy checks and exact accounting.
 2. Choose the recycled-announcement case. A recent publication cannot turn an older trading date into a fresh event.
@@ -89,7 +89,7 @@ The development lockfile keeps stable Miniflare 4 and overrides its transitive `
 npm run package
 ```
 
-Upload `artifacts/source-first-cloudflare.zip` using a Cloudflare Pages **Direct Upload** project. The ZIP is flat: `index.html`, `assets/`, `_worker.js`, `_routes.json`, `release.json`, the SVG icon, PNG project logo and licence notices are at the expected root. Keep `_worker.js`; plain static hosting cannot provide live data. No environment variables, tokens, KV, Durable Objects, database, paid API or server cron are required.
+Upload `artifacts/source-first-cloudflare.zip`, or choose the built `dist/` folder, using a Cloudflare Pages **Direct Upload** project. The ZIP is flat: `index.html`, `assets/`, `_worker.js`, `_routes.json`, `release.json`, the SVG icon and licence notices are at the expected root. Every built file is UTF-8 text. The Worker serves `/logo.png` from the same original 512px PNG bytes embedded in `worker/logo.ts`; there is no binary file to copy or upload. GET returns `image/png`, and HEAD returns the same metadata without a body. Keep `_worker.js`; plain static hosting cannot provide live data. No environment variables, tokens, KV, Durable Objects, database, paid API or server cron are required.
 
 In a restricted execution sandbox, native workerd may be unable to resolve upstream DNS even when the direct Node smoke succeeds. This produces an honest HTTP 502. Local mocked-runtime success is not a substitute for checking the public Cloudflare API routes after deployment.
 
