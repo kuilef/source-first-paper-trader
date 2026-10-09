@@ -55,6 +55,7 @@ describe("text-only release", () => {
       const bytes = readFileSync(`${file.parentPath}/${file.name}`);
       const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
       expect(Buffer.from(text, "utf8")).toEqual(bytes);
+      expect(text.endsWith("\n"), `${file.name} must end with LF`).toBe(true);
     }
   });
 });
