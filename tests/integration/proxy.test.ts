@@ -1,4 +1,5 @@
 // @vitest-environment node
+import { createHash } from "node:crypto";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createProxyHandler, type CacheLike } from "../../worker/proxy";
 
@@ -431,5 +432,65 @@ describe("assets and defensive headers", () => {
     expect(result.headers.get("content-type")).toBe(
       "application/json; charset=utf-8",
     );
+  });
+});
+
+describe("embedded project logo", () => {
+  it("serves the unchanged 512px PNG with security headers without upstream or assets", async () => {
+    const { handle, upstream, cache } = setup();
+    const result = await handle(request("/logo.png"));
+    expect(result.status).toBe(200);
+    expect(result.headers.get("content-type")).toBe("image/png");
+    expect(result.headers.get("content-length")).toBe("13136");
+    expect(result.headers.get("cache-control")).toBe("public, max-age=86400");
+    expect(result.headers.get("content-security-policy")).toContain(
+      "connect-src 'self'",
+    );
+    expect(result.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(result.headers.get("x-frame-options")).toBe("DENY");
+    const bytes = new Uint8Array(await result.arrayBuffer());
+    expect(Array.from(bytes.slice(0, 8))).toEqual([
+      137, 80, 78, 71, 13, 10, 26, 10,
+    ]);
+    expect(new DataView(bytes.buffer).getUint32(16)).toBe(512);
+    expect(new DataView(bytes.buffer).getUint32(20)).toBe(512);
+    expect(createHash("sha256").update(bytes).digest("hex")).toBe(
+      "e93e5496a201507a123fdb41f200ea116800cf471454529eaebb2bf7099e2f68",
+    );
+    expect(upstream).not.toHaveBeenCalled();
+    expect(cache.entries.size).toBe(0);
+  });
+  it("returns the same headers but no body for HEAD", async () => {
+    const { handle } = setup();
+    const get = await handle(request("/logo.png"));
+    const head = await handle(request("/logo.png", { method: "HEAD" }));
+    expect(head.status).toBe(200);
+    expect([...head.headers]).toEqual([...get.headers]);
+    expect(await head.text()).toBe("");
+  });
+  it.each(["POST", "PUT", "DELETE", "OPTIONS"])(
+    "rejects %s without upstream access",
+    async (method) => {
+      const { handle, upstream } = setup();
+      const result = await handle(request("/logo.png", { method }));
+      expect(result.status).toBe(405);
+      expect(result.headers.get("allow")).toBe("GET, HEAD");
+      expect(result.headers.get("x-content-type-options")).toBe("nosniff");
+      expect(upstream).not.toHaveBeenCalled();
+    },
+  );
+  it.each(["/logo.png/", "/LOGO.png", "/%6cogo.png", "/not/logo.png"])(
+    "does not serve the logo for a different path: %s",
+    async (path) => {
+      const { handle } = setup();
+      expect((await handle(request(path))).status).toBe(404);
+    },
+  );
+  it("treats a query string as the same static logo without forwarding it", async () => {
+    const { handle, upstream } = setup();
+    const result = await handle(request("/logo.png?v=1"));
+    expect(result.headers.get("content-type")).toBe("image/png");
+    expect((await result.arrayBuffer()).byteLength).toBe(13136);
+    expect(upstream).not.toHaveBeenCalled();
   });
 });

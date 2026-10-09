@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
   createFetchMock,
@@ -44,7 +44,40 @@ function setup() {
   return { runtime, fetchMock };
 }
 
+describe("text-only release", () => {
+  it("has no binary logo asset and every built file roundtrips as exact UTF-8", () => {
+    expect(existsSync("dist/logo.png")).toBe(false);
+    for (const file of readdirSync("dist", {
+      recursive: true,
+      withFileTypes: true,
+    })) {
+      if (!file.isFile()) continue;
+      const bytes = readFileSync(`${file.parentPath}/${file.name}`);
+      const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+      expect(Buffer.from(text, "utf8")).toEqual(bytes);
+    }
+  });
+});
+
 describe("production bundle in the actual workerd runtime", () => {
+  it("serves the PNG from the Worker rather than the HTML assets binding", async () => {
+    const { runtime } = setup();
+    const result = await runtime.dispatchFetch(
+      "https://paper.example/logo.png",
+    );
+    expect(result.headers.get("content-type")).toBe("image/png");
+    expect(result.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(
+      Array.from(new Uint8Array(await result.arrayBuffer()).slice(0, 8)),
+    ).toEqual([137, 80, 78, 71, 13, 10, 26, 10]);
+    const head = await runtime.dispatchFetch("https://paper.example/logo.png", {
+      method: "HEAD",
+    });
+    expect(head.status).toBe(200);
+    expect(head.headers.get("content-length")).toBe("13136");
+    expect(await head.text()).toBe("");
+  });
+
   it("proxies raw RSS and preserves its original observation in the real Cache API", async () => {
     const { runtime, fetchMock } = setup();
     fetchMock
