@@ -272,13 +272,11 @@ test("verified hostile text stays inert and unsafe URLs cannot replace an import
     )
   ).state;
   await page.goto("/");
-  await page
-    .getByLabel("Import journal")
-    .setInputFiles({
-      name: "inert.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(exportJournal(state)),
-    });
+  await page.getByLabel("Import journal").setInputFiles({
+    name: "inert.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(exportJournal(state)),
+  });
   await expect(
     page.getByText("Imported journal · read only", { exact: true }),
   ).toBeVisible();
@@ -293,13 +291,29 @@ test("verified hostile text stays inert and unsafe URLs cannot replace an import
   ).toHaveCount(0);
   const unsafe = structuredClone(state);
   unsafe.records[0].bundle.announcement.url = "javascript:alert(1)";
-  await page
-    .getByLabel("Import journal")
-    .setInputFiles({
-      name: "bad-url.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(JSON.stringify(unsafe)),
-    });
+  await page.getByLabel("Import journal").setInputFiles({
+    name: "bad-url.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(unsafe)),
+  });
   await expect(page.getByRole("alert")).toContainText("Import rejected");
   await expect(page.getByTestId("record-count")).toHaveText("1");
+});
+
+test("Method downloads the same PNG logo through the application server", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Method", exact: true }).click();
+  const logo = page.getByRole("link", { name: /Download.*logo/i });
+  await expect(logo).toHaveAttribute("href", "/logo.png");
+  const request = await page.request.get("/logo.png");
+  expect(request.headers()["content-type"]).toBe("image/png");
+  expect(request.headers()["x-content-type-options"]).toBe("nosniff");
+  expect((await request.body()).length).toBe(13136);
+  const downloadPromise = page.waitForEvent("download");
+  await logo.click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toMatch(/\.png$/);
+  expect(await download.failure()).toBeNull();
 });
