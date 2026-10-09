@@ -29,6 +29,20 @@ jobs:
       - run: npm run test:e2e
         env:
           PRODUCTION_PREVIEW: "1"
+      - name: Build standalone module Worker
+        run: node --import tsx scripts/build-standalone.ts
+      - name: Verify standalone browser flows
+        run: npm run test:e2e
+        env:
+          PRODUCTION_PREVIEW: "1"
+          STANDALONE_PREVIEW: "1"
+      - name: Upload standalone module Worker
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-worker-${{ github.sha }}
+          path: artifacts/source-first-worker.mjs
+          if-no-files-found: error
+          retention-days: 14
       - name: Upload flat Cloudflare deployment
         uses: actions/upload-artifact@v4
         with:
