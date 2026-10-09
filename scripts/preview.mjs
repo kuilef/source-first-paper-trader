@@ -10,36 +10,47 @@ const mime = {
   ".png": "image/png",
   ".json": "application/json",
 };
+const standalone = process.env.STANDALONE_PREVIEW === "1";
 const server = new Miniflare({
   modules: true,
-  scriptPath: "dist/_worker.js",
+  scriptPath: standalone
+    ? "artifacts/source-first-worker.mjs"
+    : "dist/_worker.js",
   compatibilityDate: "2026-07-01",
   host: "127.0.0.1",
   port: 4173,
-  serviceBindings: {
-    ASSETS: async (request) => {
-      let path;
-      try {
-        path = decodeURIComponent(new URL(request.url).pathname);
-      } catch {
-        return new Response("Invalid path", { status: 400 });
-      }
-      const file = resolve(root, "." + (path === "/" ? "/index.html" : path));
-      if (!file.startsWith(root + sep))
-        return new Response("Not found", { status: 404 });
-      try {
-        return new Response(await readFile(file), {
-          headers: {
-            "content-type": mime[extname(file)] ?? "application/octet-stream",
-          },
-        });
-      } catch {
-        return new Response("Not found", { status: 404 });
-      }
-    },
-  },
+  serviceBindings: standalone
+    ? {}
+    : {
+        ASSETS: async (request) => {
+          let path;
+          try {
+            path = decodeURIComponent(new URL(request.url).pathname);
+          } catch {
+            return new Response("Invalid path", { status: 400 });
+          }
+          const file = resolve(
+            root,
+            "." + (path === "/" ? "/index.html" : path),
+          );
+          if (!file.startsWith(root + sep))
+            return new Response("Not found", { status: 404 });
+          try {
+            return new Response(await readFile(file), {
+              headers: {
+                "content-type":
+                  mime[extname(file)] ?? "application/octet-stream",
+              },
+            });
+          } catch {
+            return new Response("Not found", { status: 404 });
+          }
+        },
+      },
 });
-console.log(`Production Worker preview: ${await server.ready}`);
+console.log(
+  `${standalone ? "Standalone" : "Pages"} Worker preview: ${await server.ready}`,
+);
 process.on("SIGINT", () => {
   void server.dispose().then(() => process.exit(0));
 });
