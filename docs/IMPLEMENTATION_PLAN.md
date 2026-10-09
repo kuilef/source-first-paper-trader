@@ -8,7 +8,6 @@ Design: [DESIGN.md](DESIGN.md).
 
 **Tech Stack:** TypeScript, Vite, Decimal.js, Vitest/jsdom, Playwright, Miniflare 4.x, accessibility checks, Cloudflare Pages advanced-mode Worker, GitHub Actions; current supported Node LTS and a committed npm lockfile.
 
-
 ## Global Constraints
 
 - Initial virtual cash: 1,000 USD. Maximum all-in entry cost: 25 USD. Maximum open positions: 1. No leverage or shorting.
@@ -127,9 +126,19 @@ Types used above (`Policy`, `Decision`, `PortfolioState`, `Position`, `EntryResu
 - [ ] Configure GitHub Actions on the selected Node LTS: `npm ci`, typecheck, unit/integration, build, browser tests; install Playwright browser dependencies through the official package path. Keep live smoke separate/non-flaky, with explicit manual invocation rather than silently substituting mocks.
 - [ ] Run dependency audit and inspect lockfile/licenses; record current findings accurately. Review Worker bundle and proxy CPU strategy against Free-plan constraints without claiming measured production CPU if unmeasured. Verify no secrets/private profile artifacts are tracked.
 - [ ] Obtain independent correctness/security review of policy chronology, identity, accounting, duplicate fills, import/storage, SSRF/XSS, and deployment config. Fix material findings with targeted failing regression tests before rerunning the full suite.
-Continue this final coherent checkpoint with the release documentation below before committing.
-
+      Continue this final coherent checkpoint with the release documentation below before committing.
 
 ## Release documentation
 
 English README/method/deployment/demo/submission notes; Russian manual; verified public deployment and explicit live-source smoke, with no fabricated availability or performance claims.
+
+## Local verification record — 9 October 2026
+
+- TypeScript, ESLint and production build passed.
+- 138 unit/integration tests passed, including 72 proxy tests and 7 actual workerd runtime checks.
+- 11 Chromium browser tests passed against the production Worker preview, including desktop/320px layout, axe checks, restart/cancellation, import/export, stale data and hostile text.
+- Independent review covered chronology, exact accounting, scheduler generations, receipt consistency, fixed proxy routes and inert imported text. Material findings have regression tests.
+- Dependency audit reported zero vulnerabilities after pinned transitive development-tool updates.
+- Live upstream evidence and an end-to-end paper-journal scan were checked separately from the synthetic fixtures.
+- Native workerd outbound DNS was unavailable in the restricted build sandbox; live direct-Node source/ledger checks succeeded and the limitation is separate from mocked runtime/browser coverage.
+- Remote CI and the deployed public URL require their own verification; these local results do not claim publication.

@@ -4,8 +4,6 @@
 
 Build one complete public demo for the BLI / RYO-CHAN Autonomous Agents bounty: an autonomous, rule-based agent that checks a narrowly defined Kraken spot-listing claim against original evidence, then opens a small virtual position or records an explainable abstention. The result must be useful and reproducible without exchange accounts, wallets, deposits, paid APIs, or a model subscription. It does not predict returns.
 
-
-
 ## Choice and alternatives
 
 Recommended: a browser-first TypeScript application with a minimal, fixed-endpoint Cloudflare Pages Worker. It needs no database, credentials, CRE account, contract deployment, or scheduled infrastructure. A deterministic interpreter and policy are enough for the published News Checker example; call it a rule-based agent, never machine learning.
@@ -101,4 +99,3 @@ Render all source/user text as text. Links allow https and known source hosts fo
 ## Release acceptance criteria
 
 The repository provides deterministic tests, reproducible installation, English documentation and a Russian operating manual. Release checks cover Cloudflare Pages assets/proxy behavior, desktop/mobile accessibility, independent correctness/security review, and a fresh read-only live-source smoke. A working demo and a prepared application draft do not imply sponsor acceptance or eligibility.
-
