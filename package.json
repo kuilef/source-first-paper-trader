@@ -20,7 +20,8 @@
     "check": "npm run typecheck && npm run lint && npm test && npm run build && npm run test:e2e",
     "package": "npm run build && node scripts/build-worker.mjs --package",
     "preview": "node scripts/preview.mjs",
-    "format": "prettier --write src worker tests scripts *.ts *.js *.json index.html docs/*.md README.md THIRD_PARTY.md"
+    "format": "prettier --write src worker tests scripts *.ts *.js *.json index.html docs/*.md README.md THIRD_PARTY.md",
+    "package:worker": "npm run build && node --import tsx scripts/build-standalone.ts"
   },
   "dependencies": {
     "@noble/hashes": "2.4.0",

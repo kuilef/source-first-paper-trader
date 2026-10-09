@@ -101,6 +101,23 @@ This small architecture is designed for free-plan use, but account quotas still 
 
 After deployment, verify `/release.json`, `/logo.png`, all three API routes, the replay, and one live scan. Report source failures honestly. The Method page has a downloadable 512×512 PNG project logo generated from the original SVG icon.
 
+## Single-file Cloudflare Worker deployment
+
+Pages remains the default build. A second packaging command embeds the same public text assets into the existing Worker, preserving the app, proxy, logo and security headers:
+
+```sh
+npm run package:worker
+STANDALONE_PREVIEW=1 npm run preview
+# In another terminal, verify the same browser flows:
+PRODUCTION_PREVIEW=1 STANDALONE_PREVIEW=1 npm run test:e2e
+```
+
+`artifacts/source-first-worker.mjs` is one LF-terminated UTF-8 ES module. It requires no bindings, secrets, uploaded asset directory or external packages at runtime. The build rejects binary inputs and scripts reaching the project's 3 MiB raw size bound. `dist/` and the Pages ZIP remain available. CI tests both deployment modes and publishes a separate `cloudflare-worker-<commit>` artifact.
+
+In the normal Cloudflare Worker dashboard, open the project's code editor, replace the default `worker.js` content with the complete generated module, and deploy it as an ES-module Worker. Use compatibility date `2026-07-01` or later. No Node compatibility flag or asset binding is needed. Keep the `export` at the end of the file. Do not paste TypeScript source or a ZIP into the editor.
+
+Deployment target: [source-first-paper-trader.kuilef42.workers.dev](https://source-first-paper-trader.kuilef42.workers.dev). This address is a configured target, not a claim that the current app is deployed there. After publication, compare `/release.json` with the actual source commit and verify the logo, replay and live-source routes. To stamp a verified revision when building an exported source archive, set `BUILD_REVISION=<verified-commit>` before `npm run package:worker`. All requests, including embedded static assets, consume Worker invocations; account quotas still apply.
+
 ## Privacy, storage and licence
 
 There is no app account, analytics, tracking pixel or remote journal database. Journal data stays in this browser's localStorage. The hosting provider receives normal HTTP requests; the Worker retrieves public Kraken data. Do not put personal information into imported files. Import bounds are 1 MiB, 200 records, depth 16 and short excerpts; executable markup and unknown fields are rejected or rendered as inert text. Imports never fetch embedded URLs. A failed write retains the prior valid journal, and corrupt data is preserved where storage permits.
