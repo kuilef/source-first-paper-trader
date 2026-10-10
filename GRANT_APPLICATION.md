@@ -11,7 +11,8 @@
 - [Рабочее демо](https://source-first-paper-trader.kuilef42.workers.dev/) — браузерная проверка replay и живых источников выполнена 9 октября 2026 года
 - [Публичный репозиторий](https://github.com/kuilef/source-first-paper-trader)
 - [Русская инструкция](docs/manual.ru.md) и [сценарий демонстрации](docs/DEMO.md)
-- [Логотип PNG](https://source-first-paper-trader.kuilef42.workers.dev/logo.png): 512×512, 13 136 байт. В приложении откройте **Method → Download project logo (PNG)**, сохраните файл и выберите его в поле логотипа
+- [Логотип PNG в репозитории](branding/logo.png) · [Скачать PNG](branding/logo.png?raw=true): 512×512, 13 136 байт. Сохраните файл и выберите его в поле логотипа заявки. Те же байты доступны [на сайте](https://source-first-paper-trader.kuilef42.workers.dev/logo.png) и в **Method → Download project logo (PNG)**
+- [Favicon ICO для сайта](branding/favicon.ico) · [Скачать ICO](branding/favicon.ico?raw=true): версии 16, 32, 48, 64, 128 и 256px в одном файле. Для поля логотипа заявки используйте PNG
 
 ## Проверенный шаг Profile
 

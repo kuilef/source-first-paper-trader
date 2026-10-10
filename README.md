@@ -1,10 +1,22 @@
 # Source-First Paper Trader
 
+<img src="branding/logo.png" alt="Source-First Paper Trader logo" width="128" height="128" />
+
 A rule-based research agent that checks original Kraken listing evidence, then autonomously records a virtual trade or an explainable abstention.
 
 **Paper-only. No funds, wallet, exchange login, API keys or language model.** A positive illustrative outcome is not evidence of investment returns.
 
 [Live demo](https://source-first-paper-trader.kuilef42.workers.dev/) · [Grant application guide](GRANT_APPLICATION.md)
+
+## Project logo and website favicon
+
+The original artwork is available as ordinary files in [branding/](branding/):
+
+- [PNG logo](branding/logo.png) · [Download PNG](branding/logo.png?raw=true): 512×512, 13,136 bytes, ready for application forms.
+- [Website favicon.ico](branding/favicon.ico) · [Download ICO](branding/favicon.ico?raw=true): one real ICO containing 16, 32, 48, 64, 128 and 256px versions of the same artwork.
+- [SVG source](branding/favicon.svg): the original scalable icon, also used by the interface.
+
+The website uses `/favicon.ico`; its `/logo.png` download matches the repository PNG byte-for-byte. The ICO was converted from that unchanged PNG with Pillow 12.3.0. Tests check that both embedded responses match the checked-in binary files and that the public SVG matches its branding copy.
 
 ## Try it locally
 
@@ -16,7 +28,7 @@ npm run build
 npm run preview
 ```
 
-Open http://127.0.0.1:4173. This preview runs the actual Cloudflare Worker through Miniflare, including its same-origin public-source routes and security headers. `npm run dev` is a faster UI-only Vite server; its live-source routes are intentionally unavailable. Both servers serve the same `/logo.png` download from the embedded project artwork.
+Open http://127.0.0.1:4173. This preview runs the actual Cloudflare Worker through Miniflare, including its same-origin public-source routes and security headers. `npm run dev` is a faster UI-only Vite server; its live-source routes are intentionally unavailable. Both servers serve the same `/logo.png` download and `/favicon.ico` from the embedded project artwork.
 
 1. In **Replay lab**, run the fresh-listing case. Inspect the automatic entry and later exit, source identity, event date, policy checks and exact accounting.
 2. Choose the recycled-announcement case. A recent publication cannot turn an older trading date into a fresh event.
@@ -91,7 +103,7 @@ The development lockfile keeps stable Miniflare 4 and overrides its transitive `
 npm run package
 ```
 
-Upload `artifacts/source-first-cloudflare.zip`, or choose the built `dist/` folder, using a Cloudflare Pages **Direct Upload** project. The ZIP is flat: `index.html`, `assets/`, `_worker.js`, `_routes.json`, `release.json`, the SVG icon and licence notices are at the expected root. Every built file is UTF-8 text. The Worker serves `/logo.png` from the same original 512px PNG bytes embedded in `worker/logo.ts`; there is no binary file to copy or upload. GET returns `image/png`, and HEAD returns the same metadata without a body. Keep `_worker.js`; plain static hosting cannot provide live data. No environment variables, tokens, KV, Durable Objects, database, paid API or server cron are required.
+Upload `artifacts/source-first-cloudflare.zip`, or choose the built `dist/` folder, using a Cloudflare Pages **Direct Upload** project. The ZIP is flat: `index.html`, `assets/`, `_worker.js`, `_routes.json`, `release.json`, the SVG icon and licence notices are at the expected root. Every built file is UTF-8 text. The Worker serves `/logo.png` and `/favicon.ico` from embedded bytes that match `branding/logo.png` and `branding/favicon.ico`. The repository contains ordinary downloadable binaries, while the deployment folder remains text-only; do not copy those binaries into `dist/`. GET returns `image/png` or `image/x-icon`, and HEAD returns the same metadata without a body. Keep `_worker.js`; plain static hosting cannot provide live data. No environment variables, tokens, KV, Durable Objects, database, paid API or server cron are required.
 
 In a restricted execution sandbox, native workerd may be unable to resolve upstream DNS even when the direct Node smoke succeeds. This produces an honest HTTP 502. Local mocked-runtime success is not a substitute for checking the public Cloudflare API routes after deployment.
 
@@ -101,11 +113,11 @@ The Worker permits only three fixed GET routes: `/api/listings`, `/api/pairs?pai
 
 This small architecture is designed for free-plan use, but account quotas still apply. [Pages Functions consume the Workers request quota](https://developers.cloudflare.com/pages/functions/pricing/). All paths invoke this project's Worker to receive security headers, so even asset requests count as Function invocations. Caching reduces upstream requests, not invocation count. No production CPU or high-traffic performance guarantee is claimed. See [Pages advanced mode](https://developers.cloudflare.com/pages/functions/advanced-mode/) before changing deployment structure.
 
-After deployment, verify `/release.json`, `/logo.png`, all three API routes, the replay, and one live scan. Report source failures honestly. The Method page has a downloadable 512×512 PNG project logo generated from the original SVG icon.
+After deployment, verify `/release.json`, `/logo.png`, `/favicon.ico`, all three API routes, the replay, and one live scan. Report source failures honestly. The Method page has a downloadable 512×512 PNG project logo generated from the original SVG icon.
 
 ## Single-file Cloudflare Worker deployment
 
-Pages remains the default build. A second packaging command embeds the same public text assets into the existing Worker, preserving the app, proxy, logo and security headers:
+Pages remains the default build. A second packaging command embeds the same public text assets into the existing Worker, preserving the app, proxy, logo, favicon and security headers:
 
 ```sh
 npm run package:worker
@@ -118,9 +130,9 @@ PRODUCTION_PREVIEW=1 STANDALONE_PREVIEW=1 npm run test:e2e
 
 In the normal Cloudflare Worker dashboard, open the project's code editor, replace the default `worker.js` content with the complete generated module, and deploy it as an ES-module Worker. Use compatibility date `2026-07-01` or later. No Node compatibility flag or asset binding is needed. Keep the `export` at the end of the file. Do not paste TypeScript source or a ZIP into the editor.
 
-Live demo: [source-first-paper-trader.kuilef42.workers.dev](https://source-first-paper-trader.kuilef42.workers.dev/). The deployed artifact was built from [f143cafd](https://github.com/kuilef/source-first-paper-trader/commit/f143cafdde1e68e7d0d6dec81589aae05013ae2b). Browser checks on 9 October 2026 verified the illustrative entry/exit, old-event abstention, and a real Kraken-source scan; the live agent was then stopped. This documentation-only update does not change that running app revision.
+Live demo: [source-first-paper-trader.kuilef42.workers.dev](https://source-first-paper-trader.kuilef42.workers.dev/). The initial public artifact was built from [f143cafd](https://github.com/kuilef/source-first-paper-trader/commit/f143cafdde1e68e7d0d6dec81589aae05013ae2b). Browser checks on 9 October 2026 verified the illustrative entry/exit, old-event abstention, and a real Kraken-source scan; the live agent was then stopped. Check `/release.json` for the currently deployed revision.
 
-For future deployments, inspect `/release.json` and verify the logo, replay and live-source routes. To stamp a verified revision when building an exported source archive, set `BUILD_REVISION=<verified-commit>` before `npm run package:worker`. All requests, including embedded static assets, consume Worker invocations; account quotas still apply.
+For future deployments, inspect `/release.json` and verify the logo, ICO favicon, replay and live-source routes. To stamp a verified revision when building an exported source archive, set `BUILD_REVISION=<verified-commit>` before `npm run package:worker`. All requests, including embedded static assets, consume Worker invocations; account quotas still apply.
 
 ## Privacy, storage and licence
 
