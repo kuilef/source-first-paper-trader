@@ -9,7 +9,7 @@
 - 65–80s: Export and re-import the journal. The imported view is read only and recalculates hashes, decisions and balances. A fingerprint is not proof of authenticity.
 - 80–90s: Open Live desk. Start or show a current real scan only when sources are reachable; otherwise show the honest source error. Explain tab-open operation and Stop.
 
-Recording assets: desktop/mobile screenshots are emitted by the browser test suite under `artifacts/screenshots/`. The deployed Method page links `/logo.png`. Do not narrate illustrative quotes as historical prices or claim a source was live without checking its current receipt.
+Recording assets: desktop/mobile screenshots are emitted by the browser test suite under `artifacts/screenshots/`. The workstation visual suite captures all 11 required application states at 320, 390, 768, 1024 and 1440px under `artifacts/screenshots/redesign/`, with an inventory and per-capture receipts. The suite uses actual UI flows and explicit test-only source mocks; those mocks are not part of the production interface. The deployed Method page links `/logo.png`. Do not narrate illustrative quotes as historical prices or claim a source was live without checking its current receipt.
 
 ## Suggested project description
 
