@@ -333,7 +333,8 @@ test("website uses the real multi-resolution ICO favicon", async ({ page }) => {
   expect(response.status()).toBe(200);
   expect(response.headers()["content-type"]).toBe("image/x-icon");
   expect(response.headers()["x-content-type-options"]).toBe("nosniff");
-  expect(await response.body()).toEqual(await readFile("branding/favicon.ico"));
+  const expectedBytes = await readFile("branding/favicon.ico");
+  expect(await response.body()).toEqual(expectedBytes);
   const dimensions = await page.evaluate(async () => {
     const icon = new Image();
     icon.src = "/favicon.ico";
@@ -342,10 +343,21 @@ test("website uses the real multi-resolution ICO favicon", async ({ page }) => {
   });
   expect(dimensions[0]).toBeGreaterThan(0);
   expect(dimensions[1]).toBe(dimensions[0]);
-  const head = await page.request.head("/favicon.ico");
+  // The HTTP runtime can gzip GET and omit Content-Length. Compare size
+  // metadata for the same uncompressed representation, retaining byte parity.
+  const headers = { "accept-encoding": "identity" };
+  const identityResponse = await page.request.get("/favicon.ico", { headers });
+  expect(identityResponse.status()).toBe(200);
+  expect(identityResponse.headers()["content-encoding"]).toBeUndefined();
+  expect(identityResponse.headers()["content-length"]).toBe(
+    String(expectedBytes.length),
+  );
+  expect(await identityResponse.body()).toEqual(expectedBytes);
+  const head = await page.request.head("/favicon.ico", { headers });
   expect(head.status()).toBe(200);
   expect(head.headers()["content-length"]).toBe(
-    response.headers()["content-length"],
+    identityResponse.headers()["content-length"],
   );
+  expect(head.headers()["content-type"]).toBe("image/x-icon");
   expect((await head.body()).length).toBe(0);
 });
