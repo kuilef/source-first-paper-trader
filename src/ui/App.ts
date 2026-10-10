@@ -66,6 +66,8 @@ const store = {
 };
 const initialLive = loadJournal(store, "live"),
   initialReplay = loadJournal(store, "illustrative-replay");
+const verifiedImportNotice =
+  "Import verified by recomputing every decision, hash and ledger total. This workspace is read only.";
 let live = initialLive.state,
   replay = initialReplay.state,
   imported: JournalState | null = null;
@@ -147,6 +149,7 @@ function stamp(iso: string | null) {
       timeZone: "UTC",
       day: "2-digit",
       month: "short",
+      year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
@@ -245,8 +248,7 @@ async function importFile(file: File | undefined) {
     imported = result.state;
     journalView = "imported";
     selectedId = imported.records[0]?.id ?? "";
-    notice =
-      "Import verified by recomputing every decision, hash and ledger total. This workspace is read only.";
+    notice = verifiedImportNotice;
   } catch (e) {
     error = `Import rejected: ${e instanceof Error ? e.message : "invalid file"}. Existing journal kept.`;
   }
@@ -255,7 +257,9 @@ async function importFile(file: File | undefined) {
 function resetCurrent() {
   if (
     !window.confirm(
-      "Reset this local workspace? Export the journal first if you want to keep it. Other workspaces are unchanged.",
+      imported
+        ? "Close this imported read-only view? Original local journals are unchanged."
+        : "Reset this local workspace? Export the journal first if you want to keep it. Other workspaces are unchanged.",
     )
   )
     return;
@@ -300,7 +304,12 @@ function toolbar() {
       "Import journal",
       input,
     ),
-    button("Reset workspace", resetCurrent, "reset", "button text-button"),
+    button(
+      imported ? "Close imported view" : "Reset workspace",
+      resetCurrent,
+      "reset",
+      "button text-button",
+    ),
   );
 }
 function stats(state: JournalState) {
@@ -393,13 +402,20 @@ function evidence(record: DecisionRecord) {
       b.pair ? `${b.pair.key} · ${b.pair.status}` : "No uniquely verified pair",
     ],
     [
-      "Quote observed",
+      "Quote response observed",
       b.quote ? stamp(b.quote.observedAt) : "Unavailable; no fill",
     ],
+    [
+      b.mode === "illustrative-replay"
+        ? "Synthetic bid / ask"
+        : "Observed bid / ask",
+      b.quote ? `$${b.quote.bid} / $${b.quote.ask}` : "Unavailable",
+    ],
+    ["Evaluation time", stamp(b.evaluatedAt)],
   ];
   const sheet = el(
     "article",
-    { class: "evidence-sheet" },
+    { class: "evidence-sheet", "aria-label": "Selected decision evidence" },
     el(
       "div",
       { class: "sheet-top" },
@@ -407,6 +423,13 @@ function evidence(record: DecisionRecord) {
       el("span", { class: "action-tag " + d.action }, d.action),
     ),
     el("h2", {}, summary),
+    p(
+      d.checks.find((check) => !check.passed)?.detail ??
+        (d.action === "paper-buy"
+          ? "All entry checks passed. The recorded cost and fees are modeled below."
+          : "The recorded observation and modeled accounting are shown below."),
+      "decision-summary",
+    ),
     p(a.title, "article-title"),
     sourceLink("Read the original announcement", a.url),
     a.excerpt
@@ -427,11 +450,43 @@ function evidence(record: DecisionRecord) {
         el("div", {}, el("dt", {}, label), el("dd", {}, value)),
       ]),
     ),
+    p(
+      "Quote response observation is not exchange trade time. No exchange quote timestamp is supplied.",
+      "caption quote-note",
+    ),
+    el("h3", { class: "subsection-label" }, "Ordered decision reasons"),
     el(
-      "div",
+      "ol",
       { class: "reason-list" },
       ...d.reasons.map((reason) =>
-        el("span", { class: "reason-code" }, reason),
+        el("li", {}, el("code", { class: "reason-code" }, reason)),
+      ),
+    ),
+  );
+  sheet.append(
+    el(
+      "details",
+      { class: "checks", "data-detail-key": record.id + ":policy" },
+      el(
+        "summary",
+        { id: "policy-summary" },
+        `Policy checks · ${d.checks.filter((c) => c.passed).length}/${d.checks.length} passed`,
+      ),
+      el(
+        "ol",
+        {},
+        ...d.checks.map((c) =>
+          el(
+            "li",
+            {},
+            el(
+              "span",
+              { class: c.passed ? "passed" : "failed" },
+              c.passed ? "Pass" : "Hold",
+            ),
+            c.detail,
+          ),
+        ),
       ),
     ),
   );
@@ -462,35 +517,8 @@ function evidence(record: DecisionRecord) {
   sheet.append(
     el(
       "details",
-      { class: "checks" },
-      el(
-        "summary",
-        {},
-        `Policy checks · ${d.checks.filter((c) => c.passed).length}/${d.checks.length} passed`,
-      ),
-      el(
-        "ul",
-        {},
-        ...d.checks.map((c) =>
-          el(
-            "li",
-            {},
-            el(
-              "span",
-              { class: c.passed ? "passed" : "failed" },
-              c.passed ? "Pass" : "Hold",
-            ),
-            c.detail,
-          ),
-        ),
-      ),
-    ),
-  );
-  sheet.append(
-    el(
-      "details",
-      { class: "checks" },
-      el("summary", {}, "Snapshot & provenance"),
+      { class: "checks", "data-detail-key": record.id + ":provenance" },
+      el("summary", { id: "provenance-summary" }, "Snapshot & provenance"),
       p(`Evaluation: ${b.evaluatedAt}`),
       p("Policy: policy-v1 · Parser: kraken-rss-v1"),
       p(
@@ -516,7 +544,7 @@ function evidence(record: DecisionRecord) {
   );
   return sheet;
 }
-function records(state: JournalState) {
+function records(state: JournalState, selected: DecisionRecord | undefined) {
   return el(
     "section",
     { class: "record-list", "aria-label": "Decision journal" },
@@ -530,22 +558,47 @@ function records(state: JournalState) {
       ? el(
           "ol",
           {},
-          ...state.records.map((r, i) =>
-            el(
-              "li",
-              {},
-              button(
-                `${String(i + 1).padStart(2, "0")}  ${r.decision.action} · ${r.bundle.announcement.symbol || "Unresolved"}`,
-                () => {
-                  selectedId = r.id;
-                  render();
-                },
-                "record-" + i,
-                "record-button" + (selectedId === r.id ? " selected" : ""),
+          ...state.records.map((r, i) => {
+            const inspect = button(
+              "",
+              () => {
+                selectedId = r.id;
+                render();
+              },
+              "record-" + i,
+              "record-button" + (selected?.id === r.id ? " selected" : ""),
+            );
+            inspect.setAttribute("aria-pressed", String(selected?.id === r.id));
+            inspect.setAttribute(
+              "aria-label",
+              `Inspect ${r.decision.action} ${r.bundle.announcement.symbol || "Unresolved"} ${i + 1}: ${r.bundle.announcement.assetName || "Unresolved identity"}. ${r.decision.reasons.join("; ")}`,
+            );
+            inspect.append(
+              el(
+                "span",
+                { class: "record-sequence" },
+                String(i + 1).padStart(2, "0"),
               ),
-              p(r.decision.reasons.join(" · "), "record-caption"),
-            ),
-          ),
+              el(
+                "span",
+                { class: "action-tag " + r.decision.action },
+                r.decision.action,
+              ),
+              el(
+                "span",
+                { class: "record-identity" },
+                r.bundle.announcement.assetName
+                  ? `${r.bundle.announcement.assetName} · ${r.bundle.announcement.symbol}`
+                  : "Unresolved identity",
+              ),
+              el(
+                "span",
+                { class: "record-caption" },
+                r.decision.reasons.join(" · "),
+              ),
+            );
+            return el("li", {}, inspect);
+          }),
         )
       : p(
           "No decisions yet. Start a live observation or run an illustrative case.",
@@ -570,7 +623,8 @@ function workspace() {
       { class: "workspace-grid" },
       el(
         "div",
-        {},
+        { class: "workspace-primary" },
+        selected ? records(s, selected) : null,
         selected
           ? evidence(selected)
           : el(
@@ -604,7 +658,7 @@ function workspace() {
                 ),
               ),
             ),
-        records(s),
+        selected ? null : records(s, selected),
       ),
       stats(s),
     ),
@@ -640,16 +694,23 @@ function replayPage() {
   run.disabled = busy;
   return el(
     "main",
-    { id: "main" },
+    { id: "main", tabindex: "-1", class: "replay-page" },
     el(
       "section",
-      { class: "hero" },
+      { class: "page-header" },
       p("THE REPLAY LAB", "eyebrow"),
       el("h1", {}, "Evidence before action."),
       p(
-        "A research agent that shows its work. Original listing evidence becomes a small virtual trade, or a clear reason to wait.",
+        "Inspect the original evidence, the policy decision and its virtual portfolio effect.",
         "lede",
       ),
+    ),
+    el(
+      "section",
+      {
+        class: "replay-controls",
+        "aria-label": "Illustrative replay controls",
+      },
       el(
         "div",
         { class: "run-box" },
@@ -688,24 +749,27 @@ function livePage() {
   stop.disabled = !status.running;
   return el(
     "main",
-    { id: "main" },
+    { id: "main", tabindex: "-1", class: "live-page" },
     el(
       "section",
-      { class: "hero" },
+      { class: "page-header" },
       p("OFFICIAL SOURCES, LIVE OBSERVATIONS", "eyebrow"),
       el("h1", {}, "The live evidence desk."),
       p(
         "Checks Kraken’s official listing feed and public USD markets. Actions are deterministic, autonomous and entirely virtual.",
         "lede",
       ),
-      el("div", { class: "actions" }, start, stop),
-      p(
-        "Runs while this page is open. Listings every 5 minutes; open positions checked every 60 seconds. Reload always starts stopped.",
-        "caption",
-      ),
+    ),
+    el(
+      "section",
+      {
+        class: "operational-strip",
+        "aria-label": "Live agent controls and runtime",
+      },
       el(
         "div",
-        { class: "runtime", "aria-live": "polite" },
+        { class: "runtime-state phase-" + status.phase, "aria-live": "polite" },
+        p("AGENT STATUS", "eyebrow"),
         el(
           "strong",
           { "data-testid": "agent-status" },
@@ -717,18 +781,46 @@ function livePage() {
                 ? "Source or storage error"
                 : "Watching",
         ),
-        p(
-          `Last successful scan: ${stamp(status.lastSuccessAt)} · Next: ${stamp(status.nextAt)}`,
-        ),
-        status.error ? p(status.error, "runtime-error") : null,
       ),
-      live.portfolio.position && !status.running
-        ? p(
-            "An open virtual position is paused. Resume to check the first new quote; missed time is never replayed as observed fills.",
-            "warning",
-          )
-        : null,
+      el("div", { class: "actions" }, start, stop),
+      el(
+        "dl",
+        { class: "runtime-facts" },
+        el(
+          "div",
+          {},
+          el("dt", {}, "Last successful scan"),
+          el("dd", {}, stamp(status.lastSuccessAt)),
+        ),
+        status.running && status.nextAt
+          ? el(
+              "div",
+              {},
+              el("dt", {}, "Next scheduled observation"),
+              el("dd", {}, stamp(status.nextAt)),
+            )
+          : null,
+        el(
+          "div",
+          {},
+          el("dt", {}, "Polling cadence"),
+          el("dd", {}, "Listings 5 min · Open position 60 sec"),
+        ),
+        el(
+          "div",
+          {},
+          el("dt", {}, "Operating window"),
+          el("dd", {}, "Page open only · Reload starts stopped"),
+        ),
+      ),
+      status.error ? p(status.error, "runtime-error") : null,
     ),
+    live.portfolio.position && !status.running
+      ? p(
+          "An open virtual position is paused. Resume to check the first new quote; missed time is never replayed as observed fills.",
+          "warning",
+        )
+      : null,
     workspace(),
   );
 }
@@ -750,10 +842,10 @@ function journalPage() {
   });
   return el(
     "main",
-    { id: "main" },
+    { id: "main", tabindex: "-1", class: "journal-page" },
     el(
       "section",
-      { class: "hero compact" },
+      { class: "page-header" },
       p("THE JOURNAL", "eyebrow"),
       el("h1", {}, "All decisions leave a trace."),
       p(
@@ -769,7 +861,7 @@ function journalPage() {
 function methodPage() {
   const sections = [
     [
-      "A rule-based research agent",
+      "00 · A rule-based research agent",
       "This project uses a narrow deterministic parser and a versioned policy, not a language model. It autonomously discovers up to three recent Kraken announcements per scan, verifies evidence, evaluates risk limits and records virtual actions. There is no RYO SDK, blockchain contract or real trading integration.",
     ],
     [
@@ -807,10 +899,10 @@ function methodPage() {
   ];
   return el(
     "main",
-    { id: "main", class: "method" },
+    { id: "main", tabindex: "-1", class: "method" },
     el(
       "section",
-      { class: "hero compact" },
+      { class: "page-header" },
       p("METHOD / POLICY-V1", "eyebrow"),
       el("h1", {}, "A clear method. Honest limits."),
       p(
@@ -846,8 +938,28 @@ function methodPage() {
     ),
   );
 }
+// Rendered nodes are replaced when the scheduler reports a new observation.
+// Retain inspection state without changing any persisted journal data.
+const expandedEvidence = new Map<string, boolean>();
+let suspendedFocusId = "";
 function render() {
-  const active = (document.activeElement as HTMLElement | null)?.id;
+  const active = document.activeElement as HTMLElement | null;
+  const activeId =
+    active?.id || (active === document.body ? suspendedFocusId : "");
+  suspendedFocusId = "";
+  const trailScroll = document.querySelector(".record-list ol")?.scrollTop ?? 0;
+  const activeHref = active?.closest("a")?.getAttribute("href");
+  const matchingLinks = activeHref
+    ? Array.from(
+        document.querySelectorAll<HTMLAnchorElement>("a[href]"),
+      ).filter((link) => link.getAttribute("href") === activeHref)
+    : [];
+  const activeLinkIndex = matchingLinks.indexOf(active as HTMLAnchorElement);
+  document
+    .querySelectorAll<HTMLDetailsElement>("details[data-detail-key]")
+    .forEach((detail) => {
+      expandedEvidence.set(detail.dataset.detailKey!, detail.open);
+    });
   const current = route();
   const header = el(
     "header",
@@ -893,8 +1005,17 @@ function render() {
         : current === "method"
           ? methodPage()
           : replayPage();
+  const skip = el(
+    "a",
+    { href: "#main", class: "skip-link" },
+    "Skip to content",
+  );
+  skip.addEventListener("click", (event) => {
+    event.preventDefault();
+    document.getElementById("main")?.focus();
+  });
   const children: Child[] = [
-    el("a", { href: "#main", class: "skip-link" }, "Skip to content"),
+    skip,
     header,
     el(
       "div",
@@ -906,7 +1027,9 @@ function render() {
       el("span", { class: "paper-dot", "aria-hidden": "true" }),
       "Paper-only. Every position is virtual. No funds, accounts or keys.",
     ),
-    notice ? el("div", { class: "notice", role: "status" }, notice) : null,
+    notice && (notice !== verifiedImportNotice || currentJournal() === imported)
+      ? el("div", { class: "notice", role: "status" }, notice)
+      : null,
     error ? el("div", { class: "error", role: "alert" }, error) : null,
     content,
     el(
@@ -921,15 +1044,32 @@ function render() {
   document
     .querySelector("#app")!
     .replaceChildren(...children.filter((c): c is Node | string => c != null));
-  if (active) document.getElementById(active)?.focus({ preventScroll: true });
-  // Friendly labels are kept separate from source-derived text.
   document
-    .querySelectorAll(".record-button")
-    .forEach((n, i) =>
-      n.setAttribute(
-        "aria-label",
-        `Inspect ${currentJournal().records[i]?.decision.action ?? "record"} ${currentJournal().records[i]?.bundle.announcement.symbol ?? ""} ${i + 1}`,
-      ),
-    );
+    .querySelectorAll<HTMLDetailsElement>("details[data-detail-key]")
+    .forEach((detail) => {
+      detail.open = expandedEvidence.get(detail.dataset.detailKey!) ?? false;
+    });
+  const trail = document.querySelector(".record-list ol");
+  if (trail) trail.scrollTop = trailScroll;
+  let focusTarget = activeId ? document.getElementById(activeId) : null;
+  if (focusTarget instanceof HTMLButtonElement && focusTarget.disabled) {
+    if (activeId === "start-agent")
+      focusTarget = document.getElementById("stop-agent");
+    else if (activeId === "stop-agent")
+      focusTarget = document.getElementById("start-agent");
+    else {
+      suspendedFocusId = activeId;
+      focusTarget = null;
+    }
+  }
+  if (!focusTarget && activeHref && activeLinkIndex >= 0) {
+    focusTarget =
+      Array.from(
+        document.querySelectorAll<HTMLAnchorElement>("a[href]"),
+      ).filter((link) => link.getAttribute("href") === activeHref)[
+        activeLinkIndex
+      ] ?? null;
+  }
+  focusTarget?.focus({ preventScroll: true });
 }
 render();
