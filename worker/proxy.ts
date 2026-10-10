@@ -1,4 +1,5 @@
 import { projectLogoResponse } from "./logo.ts";
+import { projectFaviconResponse } from "./favicon.ts";
 
 /** A raw, bounded public-source proxy. Parsing and trading policy stay in the browser. */
 export interface CacheLike {
@@ -290,6 +291,8 @@ export function createProxyHandler(options: ProxyOptions = {}) {
         );
       if (url.pathname === "/logo.png")
         return secure(projectLogoResponse(request.method));
+      if (url.pathname === "/favicon.ico")
+        return secure(projectFaviconResponse(request.method));
       if (!env.ASSETS)
         return errorResponse(
           404,

@@ -13,9 +13,10 @@ await build({
   minify: true,
 });
 
-// The logo is served by the Worker; keep even incremental builds text-only.
+// Raster branding is served by the Worker; keep incremental builds text-only.
 const { writeFile, rm } = await import("node:fs/promises");
 await rm("dist/logo.png", { force: true });
+await rm("dist/favicon.ico", { force: true });
 
 const { execFileSync } = await import("node:child_process");
 let sourceCommit = process.env.BUILD_REVISION ?? "unversioned";

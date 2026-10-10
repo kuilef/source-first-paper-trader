@@ -47,6 +47,7 @@ function setup() {
 describe("text-only release", () => {
   it("has no binary logo asset and every built file roundtrips as exact UTF-8", () => {
     expect(existsSync("dist/logo.png")).toBe(false);
+    expect(existsSync("dist/favicon.ico")).toBe(false);
     for (const file of readdirSync("dist", {
       recursive: true,
       withFileTypes: true,
@@ -61,6 +62,26 @@ describe("text-only release", () => {
 });
 
 describe("production bundle in the actual workerd runtime", () => {
+  it("serves exact ICO bytes and HEAD metadata without using the HTML assets binding", async () => {
+    const { runtime } = setup();
+    const result = await runtime.dispatchFetch(
+      "https://paper.example/favicon.ico",
+    );
+    expect(result.status).toBe(200);
+    expect(result.headers.get("content-type")).toBe("image/x-icon");
+    expect(result.headers.get("x-content-type-options")).toBe("nosniff");
+    const bytes = readFileSync("branding/favicon.ico");
+    expect(Buffer.from(await result.arrayBuffer())).toEqual(bytes);
+    const head = await runtime.dispatchFetch(
+      "https://paper.example/favicon.ico",
+      { method: "HEAD" },
+    );
+    expect(head.status).toBe(200);
+    expect(head.headers.get("content-type")).toBe("image/x-icon");
+    expect(head.headers.get("content-length")).toBe(String(bytes.length));
+    expect(await head.text()).toBe("");
+  });
+
   it("serves the PNG from the Worker rather than the HTML assets binding", async () => {
     const { runtime } = setup();
     const result = await runtime.dispatchFetch(

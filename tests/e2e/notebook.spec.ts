@@ -4,6 +4,7 @@ import { emptyJournal, runScan } from "../../src/agent/engine";
 import { exportJournal } from "../../src/storage/journal";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { readFile } from "node:fs/promises";
 test("frozen replay shows automatic entry, exit, evidence and reproducible import", async ({
   page,
 }) => {
@@ -316,4 +317,35 @@ test("Method downloads the same PNG logo through the application server", async 
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toMatch(/\.png$/);
   expect(await download.failure()).toBeNull();
+});
+
+test("website uses the real multi-resolution ICO favicon", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute(
+    "href",
+    "/favicon.ico",
+  );
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute(
+    "type",
+    "image/x-icon",
+  );
+  const response = await page.request.get("/favicon.ico");
+  expect(response.status()).toBe(200);
+  expect(response.headers()["content-type"]).toBe("image/x-icon");
+  expect(response.headers()["x-content-type-options"]).toBe("nosniff");
+  expect(await response.body()).toEqual(await readFile("branding/favicon.ico"));
+  const dimensions = await page.evaluate(async () => {
+    const icon = new Image();
+    icon.src = "/favicon.ico";
+    await icon.decode();
+    return [icon.naturalWidth, icon.naturalHeight];
+  });
+  expect(dimensions[0]).toBeGreaterThan(0);
+  expect(dimensions[1]).toBe(dimensions[0]);
+  const head = await page.request.head("/favicon.ico");
+  expect(head.status()).toBe(200);
+  expect(head.headers()["content-length"]).toBe(
+    response.headers()["content-length"],
+  );
+  expect((await head.body()).length).toBe(0);
 });

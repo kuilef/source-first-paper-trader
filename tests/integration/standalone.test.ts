@@ -82,6 +82,23 @@ describe("self-contained Worker release", () => {
     const logo = await runtime.dispatchFetch("https://paper.example/logo.png");
     expect(logo.headers.get("content-type")).toBe("image/png");
     expect((await logo.arrayBuffer()).byteLength).toBe(13136);
+    const favicon = await runtime.dispatchFetch(
+      "https://paper.example/favicon.ico",
+    );
+    const iconBytes = await readFile("branding/favicon.ico");
+    expect(favicon.status).toBe(200);
+    expect(favicon.headers.get("content-type")).toBe("image/x-icon");
+    expect(Buffer.from(await favicon.arrayBuffer())).toEqual(iconBytes);
+    const iconHead = await runtime.dispatchFetch(
+      "https://paper.example/favicon.ico",
+      { method: "HEAD" },
+    );
+    expect(iconHead.status).toBe(200);
+    expect(iconHead.headers.get("content-length")).toBe(
+      String(iconBytes.length),
+    );
+    expect(iconHead.headers.get("content-type")).toBe("image/x-icon");
+    expect(await iconHead.text()).toBe("");
   });
   it("rejects invalid, private, unknown paths and disallowed methods", async () => {
     const { runtime } = setup();
